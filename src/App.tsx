@@ -1,12 +1,12 @@
 import React from "react";
-import { COLLECTIVE, DISCORD, REPO, SECTIONS, videoById, VIDEOS } from "./data";
+import { COLLECTIVE, DISCORD, REPO, SECTIONS, VIDEOS } from "./data";
+import { goToInstall, InstallSection } from "./Install";
 import { Player, PlayerContext } from "./Player";
 import { Icon, Sections } from "./Sections";
 
 // The page is laid out like Veshell itself: a screen panel on the left whose icons are the
-// sections (the "workspaces"), a top bar, the text, and beside it the player drawn as a
-// workspace with its tabs. W and S (or the rail) go from section to section, A and D from
-// video to video, as Super+W/A/S/D do in Veshell.
+// sections (the "rows"), a top bar, the text, and beside it the player drawn as a
+// row with its tabs, and the installation below it.
 
 const useGithubStars = () => {
   const [stars, setStars] = React.useState<number | null>(null);
@@ -98,28 +98,6 @@ export const App: React.FC = () => {
     [current, request],
   );
 
-  // W/S: previous/next section. A/D: previous/next video. Only bare keys, outside fields.
-  React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.repeat) return;
-      const t = e.target as HTMLElement | null;
-      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-      const key = e.key.toLowerCase();
-      const i = SECTIONS.findIndex((s) => s.id === active);
-      if (key === "w" || key === "s") {
-        const next = SECTIONS[Math.min(SECTIONS.length - 1, Math.max(0, i + (key === "s" ? 1 : -1)))];
-        goTo(next.id);
-      } else if ((key === "a" || key === "d") && wide) {
-        const j = VIDEOS.findIndex((v) => v.id === current);
-        const next = VIDEOS[(j + (key === "d" ? 1 : VIDEOS.length - 1)) % VIDEOS.length];
-        setCurrent(next.id);
-      } else return;
-      e.preventDefault();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [active, current, wide]);
-
   const link = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     goTo(id);
@@ -133,16 +111,10 @@ export const App: React.FC = () => {
       <header className="topbar">
         <a className="brand" href="#veshell" onClick={link("veshell")} aria-label="Veshell, back to the top">
           <span className="logo">
-            <img src="/ship.svg" alt="" width={20} height={20} />
+            <img src="/logo.svg" alt="" width={32} height={32} />
           </span>
           <span className="brand-name">Veshell</span>
         </a>
-        <span className="hint" aria-hidden="true">
-          <kbd>W</kbd>
-          <kbd>A</kbd>
-          <kbd>S</kbd>
-          <kbd>D</kbd> to move around
-        </span>
         <span className="spacer" />
         <a className="chip" href={REPO} aria-label={stars === null ? "Veshell on GitHub" : `Veshell on GitHub, ${stars} stars`}>
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
@@ -159,7 +131,7 @@ export const App: React.FC = () => {
             </span>
           )}
         </a>
-        <a className="button small" href="#install" onClick={link("install")}>
+        <a className="button small" href="#install" onClick={goToInstall}>
           <Icon name="download" /> <span className="install-label">Install</span>
         </a>
       </header>
@@ -193,7 +165,7 @@ export const App: React.FC = () => {
 
       <div className="layout">
         <main className="doc">
-          <Sections />
+          <Sections wide={wide} />
           <footer className="footer">
             <p>
               Veshell is free software under the GPL-3.0, a <a href="https://free-explorers.com">Free Explorers</a> project. This site's source is on{" "}
@@ -203,14 +175,7 @@ export const App: React.FC = () => {
         </main>
         <aside className="side" aria-label="Videos">
           <Player autoplay={wide} />
-          <div className="side-card">
-            <p>
-              <strong>{videoById(current).tab}</strong> · {VIDEOS.findIndex((v) => v.id === current) + 1} of {VIDEOS.length}
-            </p>
-            <p className="muted">
-              The player follows the section you're reading. <kbd>A</kbd> <kbd>D</kbd> switch videos.
-            </p>
-          </div>
+          {wide && <InstallSection side />}
         </aside>
       </div>
     </PlayerContext.Provider>

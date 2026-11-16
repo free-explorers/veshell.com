@@ -5,7 +5,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { App } from "./App";
 
-export { SITE, REPO, COLLECTIVE, DISCORD, MEDIA_BASE, VIDEOS } from "./data";
+export { SITE, REPO, COLLECTIVE, DISCORD, VIDEOS } from "./data";
 
 export const render = () =>
   renderToString(

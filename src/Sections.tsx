@@ -1,7 +1,8 @@
 import React from "react";
-import { COLLECTIVE, DISCORD, FREE_EXPLORERS, HOTKEYS, REPO, SECTIONS, VIDEOS } from "./data";
-import { Install } from "./Install";
-import { InlineVideo, usePlayer } from "./Player";
+import { COLLECTIVE, DISCORD, FREE_EXPLORERS, HOTKEYS, REPO, SECTIONS } from "./data";
+import { InstallSection } from "./Install";
+import { MonitorsDiagram, NavigationDiagram, SpatialDiagram } from "./Diagrams";
+import { InlineVideo } from "./Player";
 
 // The page's text, one block per section. Plain and factual: what it does and how.
 
@@ -17,7 +18,10 @@ const Block: React.FC<{ id: string; children: React.ReactNode; video?: string }>
   return (
     <section id={id} className="block" aria-labelledby={`${id}-title`}>
       <Heading id={`${id}-title`} className="block-title">
-        <a href={`#${id}`}>{section.title}</a>
+        <a href={`#${id}`}>
+          {id !== "veshell" && <Icon name={section.icon} className="title-icon" />}
+          {section.title}
+        </a>
       </Heading>
       {video && <InlineVideo id={video} />}
       {children}
@@ -36,48 +40,25 @@ const Keys: React.FC<{ keys: string[] }> = ({ keys }) => (
   </span>
 );
 
-const WatchTeaser: React.FC = () => {
-  const player = usePlayer();
-  const teaser = VIDEOS.find((v) => v.id === "teaser")!;
-  return (
-    <button type="button" className="text-button" onClick={() => {
-        player.show("teaser", true);
-        const el = document.getElementById("player");
-        if (el && el.getBoundingClientRect().bottom < 0) el.scrollIntoView({ behavior: "smooth" });
-      }}>
-      <Icon name="play_circle" /> Watch the teaser ({teaser.duration})
-    </button>
-  );
-};
-
 const HEADLINES: { id: string; icon: string; text: string }[] = [
-  { id: "spatial-model", icon: "grid_view", text: "Apps on a grid: a row per workspace, a tile per app." },
+  { id: "spatial-model", icon: "grid_view", text: "Apps on a grid: rows of tiles, a tile per app." },
   { id: "navigation", icon: "explore", text: "Move by direction, from the keyboard, the mouse or a touchscreen." },
   { id: "persistence", icon: "save", text: "Your layout is saved as you go and comes back after a reboot." },
+  { id: "tiles", icon: "select_window", text: "Maximized, fullscreen, game and floating display modes." },
+  { id: "screens", icon: "monitor", text: "Each monitor has its own rows; an ultra-wide one can be split." },
   { id: "interface", icon: "dashboard", text: "Two small panels, and an Overview for search and the system." },
-  { id: "tiles", icon: "select_window", text: "Fullscreen, game and floating modes; several monitors." },
 ];
 
-export const Sections: React.FC = () => (
+export const Sections: React.FC<{ wide: boolean }> = ({ wide }) => (
   <>
     <Block id="veshell">
       <p className="lead">
-        Veshell is a Wayland environment for Linux: a compositor and a complete shell, written in Rust and Flutter, free software under the GPL-3.0.
+        Veshell is a Linux environment that aims to provide a workflow that <strong>reduces the need to manipulate windows</strong>, feels <strong>more natural to navigate</strong>, and is{" "}
+        <strong>accessible to everyone</strong>.
       </p>
       <p>
-        Your apps live on a grid. Each row is a workspace, each app takes a tile in it, and you go from one to another by direction. Veshell saves that layout
-        as you use it, so after a reboot every app is waiting where you left it.
-      </p>
-      <p>
-        It follows <a href="https://github.com/material-shell/material-shell">Material Shell</a>, the GNOME Shell extension, rebuilt from the ground up as its
-        own environment.
-      </p>
-      <p className="note">
-        <Icon name="construction" />
-        <span>
-          Veshell is young (version 0.2). Its developers use it every day, but expect rough edges, and please{" "}
-          <a href={`${REPO}/issues`}>report them</a>.
-        </span>
+        In order to achieve that goal, Veshell provides an environment that is <strong>predictable</strong> and <strong>persists across sessions</strong>. Every decision you make along the
+        way is <strong>remembered</strong>, which lets you <strong>build your own layout</strong> simply by using Veshell.
       </p>
       <ul className="headlines">
         {HEADLINES.map((h) => (
@@ -92,153 +73,208 @@ export const Sections: React.FC = () => (
           </li>
         ))}
       </ul>
-      <div className="actions">
-        <a className="button" href="#install">
-          <Icon name="download" /> Install
-        </a>
-        <WatchTeaser />
-      </div>
     </Block>
 
     <Block id="spatial-model" video="build">
-      <p>Veshell arranges your apps on a two-dimensional grid.</p>
-      <ul>
-        <li>
-          A <strong>screen</strong> holds a column of <strong>workspaces</strong>, one below the other.
-        </li>
-        <li>
-          A workspace is a row of <strong>tiles</strong>. A tile holds one app.
-        </li>
-        <li>A new app takes the next tile at the end of the current workspace.</li>
-        <li>
-          There's always an empty workspace at the bottom. Open an app there and a new empty one appears below it. Workspaces you've emptied and left are
-          removed.
-        </li>
-      </ul>
       <p>
-        Nothing gets placed at random, so you always know where an app went. Group them however suits you: a workspace per project, per topic, or one for
-        chat and one for music.
+        It's much easier to navigate in a <strong>known space</strong>, so we made it <strong>predictable</strong>: that's why Veshell arranges your apps on a{" "}
+        <strong>two-dimensional grid</strong>.
       </p>
-      <h3>Tiles per screen</h3>
+      <SpatialDiagram />
       <p>
-        The <Keys keys={["−", "1", "+"]} /> control at the top right of a workspace sets how many tiles share the screen. With 2, two apps sit side by side;
-        the rest of the row is one step to the left or right.
+        You organize your applications <strong>relative to each other</strong>, in a way that's <strong>meaningful to you</strong>. It takes shape <strong>naturally</strong>, simply by using
+        your computer day to day.
       </p>
     </Block>
 
     <Block id="navigation" video="navigate">
       <p>
-        You go to an app by direction: <strong>left and right</strong> between the tiles of a workspace, <strong>up and down</strong> between workspaces.
-        Each move slides, so you see where you're going.
+        Since the environment is <strong>predictable</strong>, you can <strong>navigate it by direction</strong>. Each move slides, so you{" "}
+        <strong>feel where you're going</strong>.
       </p>
-      <p>
-        Since apps only move when you move them, you stop looking after a few days: the browser is left of the editor, the chat is one workspace up. It's the
-        same memory you use to find the light switch in a dark room.
-      </p>
+      <NavigationDiagram />
+      <p>You can navigate with <strong>any kind of input</strong>:</p>
       <ul>
         <li>
-          <strong>Keyboard:</strong> <Keys keys={["Super", "W A S D"]} /> or <Keys keys={["Super", "arrows"]} />. Add <kbd>Shift</kbd> to take the current
-          app with you.
+          <strong>Mouse or touch</strong>, with the buttons on the interface's panels
         </li>
         <li>
-          <strong>Mouse:</strong> the left panel lists the workspaces, the top panel the tiles of the current one. <Keys keys={["Super", "drag"]} /> moves a
-          tile to another place, workspace or monitor.
+          <strong>Touchpad gestures</strong>: swipe with three fingers in any direction
         </li>
         <li>
-          <strong>Touch:</strong> touchpad gestures and touchscreens. Game controller support is on its way.
+          <strong>Keyboard shortcuts</strong>, configurable: <Keys keys={["Super", "W A S D"]} /> or <Keys keys={["Super", "arrows"]} />
+        </li>
+        <li>
+          <strong>Game controller</strong>: great on handheld devices like the Steam Deck
         </li>
       </ul>
     </Block>
 
     <Block id="persistence" video="persist">
       <p>
-        You never save a layout. Veshell records each change as you make it (which app, in which tile, on which workspace and screen) and puts everything
+        <strong>You never save a layout</strong>. Veshell <strong>records each change</strong> as you make it (which app, in which tile, on which row and screen) and puts everything
         back when you log in.
       </p>
       <p>
-        After a reboot, each app you had open waits in its tile as a placeholder. Click it, or press <kbd>Enter</kbd>, and the app starts right there. What
+        After a reboot, each app you had open <strong>waits in its tile</strong> as a placeholder. Click it, or press <kbd>Enter</kbd>, and the app starts right there. What
         comes back with it depends on the app:
       </p>
       <ul>
-        <li>Browsers, editors and document viewers reopen their own tabs, projects and documents.</li>
-        <li>Terminals reopen in the same folder, running the same program.</li>
-        <li>Other apps start fresh, in the right place.</li>
+        <li>Browsers, editors and document viewers reopen their <strong>own tabs, projects and documents</strong>.</li>
+        <li>Terminals reopen in the <strong>same folder, running the same program</strong>.</li>
+        <li>Other apps <strong>start fresh</strong>, in the right place.</li>
       </ul>
       <p>
-        Veshell doesn't freeze processes or snapshot memory. It puts each app back where it belongs and lets it restore what it knows how to.
+        Veshell <strong>doesn't freeze processes or snapshot memory</strong>. It puts each app back where it belongs and lets it restore what it knows how to.
       </p>
-    </Block>
-
-    <Block id="interface" video="overview">
-      <p>Two thin panels and an overlay. The rest of the screen is your apps.</p>
-      <h3>The screen panel, on the left</h3>
-      <p>The workspaces of the screen, one icon each. Click one to go there.</p>
-      <h3>The workspace panel, at the top</h3>
-      <p>The tiles of the current workspace as tabs, a + to add one, and the tiles-per-screen control.</p>
-      <h3>The Overview</h3>
-      <p>
-        Tap <kbd>Super</kbd> to open it. Search apps, files or settings (<Keys keys={["Super", "Tab"]} /> switches). An app opened from the Overview stays
-        there, outside your layout: handy for a quick calculation or a setting. Files can be browsed and previewed in place.
-      </p>
-      <h3>The Helm</h3>
-      <p>
-        The Overview's dashboard: volume and audio devices, network and Bluetooth, batteries, CPU, memory, GPU and disks, media players, notifications, and
-        lock, log out, sleep, restart and power off.
-      </p>
-      <p>The interface follows Material Design, tinted with a colour you choose. The settings are searchable from the Overview, like apps and files.</p>
     </Block>
 
     <Block id="tiles">
-      <p>Each tile has a display mode, picked from the buttons on the tile:</p>
+      <p>A tile is an app's place in your layout. It plays two roles:</p>
+      <ul>
+        <li>
+          <strong>A placeholder.</strong> When the app isn't running, its tile stays where it is. Click it and the app opens right there. You can{" "}
+          <strong>edit the command</strong> the tile runs, and while the app starts, the tile shows its <strong>running process and output</strong>, so you see at
+          once if something goes wrong.
+        </li>
+        <li>
+          <strong>A boundary.</strong> The app is <strong>kept inside its tile</strong> and never spreads over your other apps. The windows it opens on its own
+          behalf (dialogs, file pickers, an About box, a window from a helper process) <strong>open in its tile</strong> too, instead of taking a new one. And a
+          splash screen hands over to the main window in the same tile.
+        </li>
+      </ul>
+      <h3>Display modes</h3>
+      <p>Each tile has a <strong>display mode</strong>, picked from the buttons on the tile:</p>
       <dl className="defs">
         <dt>Maximized</dt>
-        <dd>The app fills its tile. The default.</dd>
+        <dd>The app fills its tile, and its dialogs open inside it. The default.</dd>
         <dt>Fullscreen</dt>
-        <dd>The app fills the whole screen.</dd>
+        <dd>
+          The app is told it's fullscreen, so it hides its own toolbars and frame, but it <strong>stays in its tile</strong>.
+        </dd>
         <dt>Game</dt>
         <dd>
-          The compositor draws the game directly at full size and sends input straight to it, for the lowest latency. <Keys keys={["Ctrl", "Esc"]} />{" "}
-          releases the keyboard and mouse.
+          The game gets <strong>direct access to rendering and inputs</strong>: the compositor draws it at full size and sends input straight to it, to optimize{" "}
+          <strong>latency and performance</strong>. Going to a game tile never
+          grabs your mouse and keyboard: the game waits behind a frosted layer until you click it. <Keys keys={["Ctrl", "Esc"]} /> releases them again, and the
+          game keeps its tile.
         </dd>
         <dt>Floating</dt>
-        <dd>For apps that need free placement, like Zoom: their windows and dialogs move and resize freely inside the tile.</dd>
+        <dd>
+          For apps that need free placement, like Zoom. The app's windows and dialogs each get their own title bar and{" "}
+          <strong>move and resize freely, inside the tile</strong>: they never leave it. A new window opens on top, and clicking a window raises it.
+        </dd>
       </dl>
-      <h3>Monitors and screens</h3>
-      <p>Each monitor has its own column of workspaces. An ultra-wide monitor can be split into several screens, each with its own workspaces.</p>
+      <h3>Moving tiles</h3>
+      <p>
+        Hold <kbd>Super</kbd> and <strong>drag a tile</strong>: drop it on another tile to reorder them, on a row in the vertical panel, or on another screen or
+        monitor. While you hold it, <Keys keys={["Super", "W A S D"]} /> still moves around, so the layout slides under the tile to a place that wasn't on screen.
+        From the keyboard, <Keys keys={["Super", "Shift", "W A S D"]} /> takes the current app with you.
+      </p>
     </Block>
 
-    <Block id="compared">
-      <h3>Isn't this Niri, or PaperWM?</h3>
+    <Block id="screens">
       <p>
-        The navigation is close: apps side by side in a row, workspaces stacked vertically, everything reached by direction. The differences are around it.
-        Veshell is a complete environment (panels, launcher, file browser, notifications, settings, lock screen) set up from its own interface rather than a
-        config file. And its layout lasts across sessions: after a reboot your apps are waiting in their tiles. Niri is a great compositor to build your own
-        setup around; Veshell aims to work as it is, out of the box.
+        Monitors and screens sound alike, but in Veshell they are two things: the <strong>monitor</strong> is the device, and a <strong>screen</strong> is a layout
+        of rows shown on it.
       </p>
-      <h3>Is it a tiling window manager?</h3>
+      <ul>
+        <li>
+          By default, a monitor shows a <strong>single screen</strong>, but you can <strong>split a monitor into several screens</strong>: very handy on an
+          ultra-wide monitor.
+        </li>
+        <li>
+          With several monitors, each one holds <strong>its own screen configuration</strong>, which you can swap or change at any time.
+        </li>
+        <li>
+          When a monitor is <strong>disconnected</strong>, its apps live on in its screens, which stay <strong>accessible from the Screen menu</strong>.
+        </li>
+      </ul>
+      <MonitorsDiagram />
+      <ul>
+        <li>
+          A monitor can also <strong>mirror</strong> another one.
+        </li>
+        <li>
+          The display settings cover the resolution, <strong>fractional scaling</strong>, rotation and the arrangement of your monitors.
+        </li>
+      </ul>
+    </Block>
+
+    <Block id="interface" video="overview">
       <p>
-        In the sense that apps never overlap and are placed for you, yes. But there's no tree of splits to manage and no layout to write: you choose how many
-        tiles share the screen, and that's all.
+        Veshell provides a <strong>complete interface</strong> to interact with your system.
       </p>
-      <h3>Why “not-desktop”?</h3>
+
+      <h3>The Shell</h3>
       <p>
-        Desktop environments copy an office desk: windows piled up like sheets of paper, a trash can, folders. Veshell drops that metaphor for a place you move
-        around in. That's all the term means.
+        The panels give an <strong>at-a-glance view of where everything is</strong> and let you navigate with a{" "}
+        <strong>mouse or on a touchscreen</strong>.
       </p>
-      <h3>Is it for power users?</h3>
+      <ul>
+        <li>
+          <strong>The vertical panel</strong> lists the <strong>rows</strong>. Each icon shows either the apps in the row or the row's category, determined
+          automatically. It also holds the <strong>Screen menu</strong>, to switch between screen configurations or <strong>split your monitor into several screens</strong>.
+        </li>
+        <li>
+          <strong>The horizontal panel</strong>, at the top, shows the <strong>tiles of the current row as tabs</strong>, and the control for how
+          many tiles share the screen.
+        </li>
+      </ul>
+      <h3>The Overview</h3>
       <p>
-        No. The hotkeys are there for those who want them, but the panels, the mouse and touch work just as well. The goal is an environment anyone can find
-        their way in.
+        The Overview gives you <strong>quick access</strong> to the <strong>Helm</strong>, an <strong>Ephemeral Application Launcher</strong>, a <strong>file manager</strong> and a{" "}
+        <strong>set of settings</strong> to customize your experience. Tap <kbd>Super</kbd> to open it.
       </p>
-      <h3>Does it collect data?</h3>
+      <ul>
+        <li>
+          <strong>The Helm</strong>, your system dashboard. Its widgets show the <strong>state of your computer</strong> and let you act on it right there:
+          <ul>
+            <li>
+              <strong>Sound</strong>: the volume, and the output and input devices to choose from
+            </li>
+            <li>
+              <strong>Connections</strong>: Ethernet, Wi-Fi and Bluetooth, each with its switch and its devices
+            </li>
+            <li>
+              <strong>Power</strong>: the batteries, wireless mice and headsets included
+            </li>
+            <li>
+              <strong>Performance</strong>: CPU, memory, GPU and disks
+            </li>
+            <li>
+              <strong>Media players</strong>: playback controls for every app that supports MPRIS
+            </li>
+            <li>
+              <strong>Notification history</strong>: all your notifications <strong>in one place</strong>, read ones included, kept across sessions until you clear it
+            </li>
+            <li>
+              <strong>Background apps</strong>: the apps running without a window, like chat clients, sync tools and game launchers, each with its menu
+            </li>
+            <li>
+              <strong>Session</strong>: lock, log out, sleep, restart and power off
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>Ephemeral Application Launcher</strong>: your layout is for the apps you work in. A quick calculation, a setting to change or a password to look
+          up shouldn't move it around, so the Overview opens apps <strong>outside your layout</strong>.
+        </li>
+        <li>
+          <strong>The file manager</strong>: search your files, then <strong>browse and preview</strong> them in place.
+        </li>
+        <li>
+          <strong>The settings</strong>, searchable like apps and files (<Keys keys={["Super", "Tab"]} /> switches the search).
+        </li>
+      </ul>
       <p>
-        No. No analytics, nothing phones home. <a href={`${REPO}/blob/main/docs/privacy.md`}>Details in the repository</a>.
+        The interface follows <strong>Material Design</strong>, tinted with a <strong>colour you choose</strong>.
       </p>
     </Block>
 
     <Block id="hotkeys">
       <p>
-        The defaults. The arrow keys work everywhere instead of <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, and every hotkey can be changed in the
+        The defaults. The arrow keys work everywhere instead of <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>, and <strong>every hotkey can be changed</strong> in the
         keyboard settings.
       </p>
       {HOTKEYS.map((g) => (
@@ -260,19 +296,12 @@ export const Sections: React.FC = () => (
       ))}
     </Block>
 
-    <Block id="install">
-      <p>Veshell is packaged by the community for these distributions.</p>
-      <Install />
-      <p>
-        Then log out, choose <strong>Veshell</strong> in your login screen's session list, and log in. To build it yourself, see{" "}
-        <a href={`${REPO}#building-from-source`}>building from source</a>.
-      </p>
-    </Block>
+    {!wide && <InstallSection />}
 
     <Block id="involved">
       <p>
-        Veshell is developed in the open by the <a href={FREE_EXPLORERS}>Free Explorers</a>, a collective that funds open-source work through Open Collective,
-        where every income and expense is public.
+        Veshell is <strong>developed in the open</strong> by the <a href={FREE_EXPLORERS}>Free Explorers</a>, a collective that funds open-source work through Open Collective,
+        where <strong>every income and expense is public</strong>.
       </p>
       <ul className="links">
         <li>

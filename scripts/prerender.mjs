@@ -8,13 +8,13 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
 const ssr = path.join(root, "dist-ssr");
-const { render, SITE, REPO, COLLECTIVE, DISCORD, MEDIA_BASE, VIDEOS } = await import(pathToFileURL(path.join(ssr, "ssr.js")).href);
+const { render, SITE, REPO, COLLECTIVE, DISCORD, VIDEOS } = await import(pathToFileURL(path.join(ssr, "ssr.js")).href);
 
 const TITLE = "Veshell · Your Linux apps on a map";
 const DESCRIPTION =
   "Veshell is a Wayland environment for Linux. Apps sit on a grid you move around by direction, and the layout comes back after a reboot. Free software, GPL-3.0.";
 const IMAGE = `${SITE}/og.jpg`;
-const IMAGE_ALT = "Veshell with two apps side by side in a workspace, the workspace panel on top and the screen panel on the left";
+const IMAGE_ALT = "Veshell with two apps side by side in a row, the row panel on top and the screen panel on the left";
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const teaser = VIDEOS.find((v) => v.id === "teaser");
@@ -47,7 +47,7 @@ const structuredData = {
       name: "Veshell teaser",
       description: "Veshell, the not-desktop environment for Linux, in a short teaser.",
       thumbnailUrl: SITE + teaser.poster,
-      contentUrl: `${MEDIA_BASE}/${teaser.file}.mp4`,
+      contentUrl: `${SITE}/${teaser.file}.mp4`,
       uploadDate: "2026-11-11",
     },
   ],

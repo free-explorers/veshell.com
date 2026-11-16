@@ -1,8 +1,8 @@
 import React from "react";
 import { AV1, AV1_OPUS, H264, media, videoById, VIDEOS, type Video } from "./data";
 
-// The player beside the text. It's drawn like a Veshell workspace: the videos are tabs in a
-// workspace panel, the video is the tile. It follows the section being read (each section
+// The player beside the text. It's drawn like a Veshell row: the videos are tabs in a
+// row panel, the video is the tile. It follows the section being read (each section
 // names its video), unless a tab was picked by hand since the last section change.
 //
 // Clips are silent screen recordings: they play muted and loop. The teaser has sound and
