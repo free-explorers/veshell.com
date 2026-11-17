@@ -80,15 +80,14 @@ export const DISTROS: Distro[] = [
     ],
   },
   {
+    id: "ubuntu",
+    name: "Ubuntu",
+    steps: [{ text: "From OBS, on Ubuntu 26.04:" }, { code: 'sudo install -d -m 0755 /etc/apt/keyrings\ncurl -fsSL https://download.opensuse.org/repositories/home:/PapyElGringo/xUbuntu_26.04/Release.key \\\n  | sudo gpg --batch --no-tty --yes --dearmor -o /etc/apt/keyrings/veshell.gpg\necho "deb [signed-by=/etc/apt/keyrings/veshell.gpg] https://download.opensuse.org/repositories/home:/PapyElGringo/xUbuntu_26.04/ ./" \\\n  | sudo tee /etc/apt/sources.list.d/veshell.list\nsudo apt update && sudo apt install veshell-bin' }],
+  },
+  {
     id: "debian",
-    name: "Debian · Ubuntu",
-    steps: [
-      { text: "From OBS, on Ubuntu 26.04:" },
-      {
-        code: 'sudo install -d -m 0755 /etc/apt/keyrings\ncurl -fsSL https://download.opensuse.org/repositories/home:/PapyElGringo/xUbuntu_26.04/Release.key \\\n  | sudo gpg --batch --no-tty --yes --dearmor -o /etc/apt/keyrings/veshell.gpg\necho "deb [signed-by=/etc/apt/keyrings/veshell.gpg] https://download.opensuse.org/repositories/home:/PapyElGringo/xUbuntu_26.04/ ./" \\\n  | sudo tee /etc/apt/sources.list.d/veshell.list\nsudo apt update && sudo apt install veshell-bin',
-      },
-      { text: "On Debian 13, replace xUbuntu_26.04 with Debian_13 (twice)." },
-    ],
+    name: "Debian",
+    steps: [{ text: "From OBS, on Debian 13:" }, { code: 'sudo install -d -m 0755 /etc/apt/keyrings\ncurl -fsSL https://download.opensuse.org/repositories/home:/PapyElGringo/Debian_13/Release.key \\\n  | sudo gpg --batch --no-tty --yes --dearmor -o /etc/apt/keyrings/veshell.gpg\necho "deb [signed-by=/etc/apt/keyrings/veshell.gpg] https://download.opensuse.org/repositories/home:/PapyElGringo/Debian_13/ ./" \\\n  | sudo tee /etc/apt/sources.list.d/veshell.list\nsudo apt update && sudo apt install veshell-bin' }],
   },
   {
     id: "nixos",
