@@ -69,7 +69,15 @@ export const Install: React.FC = () => {
                 <Copy text={s.code.replace(/\\\n\s*/g, "")} />
               </div>
             ) : (
-              <p key={i}>{s.text}</p>
+              <p key={i}>
+                {s.text}
+                {s.link && (
+                  <>
+                    {" "}
+                    <a href={s.link.href}>{s.link.label}</a>
+                  </>
+                )}
+              </p>
             ),
           )}
         </div>

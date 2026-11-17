@@ -51,7 +51,8 @@ export const SECTIONS: Section[] = [
   { id: "involved", icon: "group", title: "Get involved" },
 ];
 
-export type Distro = { id: string; name: string; steps: { text?: string; code?: string }[] };
+// A step is a paragraph (`text`, with an optional `link` after it) or a block of commands to copy (`code`).
+export type Distro = { id: string; name: string; steps: { text?: string; link?: { href: string; label: string }; code?: string }[] };
 // From the README of free-explorers/veshell; keep them in step.
 export const DISTROS: Distro[] = [
   {
@@ -93,8 +94,20 @@ export const DISTROS: Distro[] = [
     id: "nixos",
     name: "NixOS",
     steps: [
-      { text: "A flake. It needs flakes and the Veshell binary cache enabled first, see the NixOS guide in the repository. Then:" },
+      {
+        text: "Veshell is a Nix flake, for x86_64-linux. First enable flakes and the Veshell binary cache system-wide, in configuration.nix, then rebuild. Without the cache, Nix compiles the Flutter engine from source:",
+      },
+      {
+        code: 'nix.settings = {\n  experimental-features = [ "nix-command" "flakes" ];\n  extra-substituters = [ "https://veshell.cachix.org" ];\n  extra-trusted-public-keys = [\n    "veshell.cachix.org-1:C8J71PCJ1Fx4+4shICPNsSOnGgijVEHZCTrWhbYyjOI="\n  ];\n};',
+      },
+      { code: "sudo nixos-rebuild switch" },
+      { text: "Try it:" },
       { code: "nix run github:free-explorers/veshell" },
+      { text: "To install it, add the NixOS module to your system flake, rebuild, then choose Veshell in your display manager:" },
+      {
+        code: 'inputs.veshell.url = "github:free-explorers/veshell";\n\n# in your nixosSystem modules:\nimports = [ inputs.veshell.nixosModules.default ];\nprograms.veshell.enable = true;',
+      },
+      { text: "Troubleshooting and details:", link: { href: "https://github.com/free-explorers/veshell/blob/main/docs/nixos.md", label: "the NixOS guide" } },
     ],
   },
 ];
