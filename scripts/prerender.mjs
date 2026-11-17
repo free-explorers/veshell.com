@@ -10,9 +10,9 @@ const dist = path.join(root, "dist");
 const ssr = path.join(root, "dist-ssr");
 const { render, SITE, REPO, COLLECTIVE, DISCORD, VIDEOS } = await import(pathToFileURL(path.join(ssr, "ssr.js")).href);
 
-const TITLE = "Veshell · Your Linux apps on a map";
+const TITLE = "Veshell · A predictable environment for Linux";
 const DESCRIPTION =
-  "Veshell is a Wayland environment for Linux. Apps sit on a grid you move around by direction, and the layout comes back after a reboot. Free software, GPL-3.0.";
+  "In Veshell, your apps sit in a grid you move between by direction, and your layout comes back after a reboot. Free software, GPL-3.0.";
 const IMAGE = `${SITE}/og.jpg`;
 const IMAGE_ALT = "Veshell with two apps side by side in a row, the row panel on top and the screen panel on the left";
 
