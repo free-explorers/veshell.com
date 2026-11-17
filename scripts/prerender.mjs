@@ -14,7 +14,7 @@ const TITLE = "Veshell · A predictable environment for Linux";
 const DESCRIPTION =
   "In Veshell, your apps sit in a grid you move between by direction, and your layout comes back after a reboot. Free software, GPL-3.0.";
 const IMAGE = `${SITE}/og.jpg`;
-const IMAGE_ALT = "Veshell with two apps side by side in a row, the row panel on top and the screen panel on the left";
+const IMAGE_ALT = "Veshell with two tiles side by side: Firefox on the Veshell GitHub page, and the app launcher of a new tile; the vertical panel on the left and the horizontal panel on top";
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const teaser = VIDEOS.find((v) => v.id === "teaser");
