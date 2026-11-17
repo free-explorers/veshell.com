@@ -41,12 +41,12 @@ const Keys: React.FC<{ keys: string[] }> = ({ keys }) => (
 );
 
 const HEADLINES: { id: string; icon: string; text: string }[] = [
-  { id: "spatial-model", icon: "grid_view", text: "Apps on a grid: rows of tiles, a tile per app." },
-  { id: "navigation", icon: "explore", text: "Move by direction, from the keyboard, the mouse or a touchscreen." },
+  { id: "spatial-model", icon: "grid_view", text: "A predictable grid of rows, arranged your way." },
+  { id: "navigation", icon: "explore", text: "Move by direction, with keyboard, mouse, touch or controller." },
   { id: "persistence", icon: "save", text: "Your layout is saved as you go and comes back after a reboot." },
-  { id: "tiles", icon: "select_window", text: "Maximized, fullscreen, game and floating display modes." },
-  { id: "screens", icon: "monitor", text: "Each monitor has its own rows; an ultra-wide one can be split." },
-  { id: "interface", icon: "dashboard", text: "Two small panels, and an Overview for search and the system." },
+  { id: "tiles", icon: "select_window", text: "Each app keeps its tile, even closed, with four display modes." },
+  { id: "screens", icon: "monitor", text: "Split a monitor into screens; each keeps its layout, even unplugged." },
+  { id: "interface", icon: "dashboard", text: "Panels to see where everything is, and an Overview with the Helm." },
 ];
 
 export const Sections: React.FC<{ wide: boolean }> = ({ wide }) => (
